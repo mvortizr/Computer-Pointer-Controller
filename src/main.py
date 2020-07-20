@@ -81,28 +81,44 @@ def init_models(args):
 			print(f'[ERROR] {model_name} file does not exist')
 			exit(1)
 
+	#Init classes
 	face_detec = FaceDetectionModel(models_info['face_detection_model'], args.device, args.cpu_extension, args.threshold)
-    #fldm = FacialLandmarksDetectionModel(modelPathDict['FacialLandmarksDetectionModel'], args.device, args.cpu_extension)
-    #gem = GazeEstimationModel(modelPathDict['GazeEstimationModel'], args.device, args.cpu_extension)
-    #hpem = HeadPoseEstimationModel(modelPathDict['HeadPoseEstimationModel'], args.device, args.cpu_extension)
+	fac_land = FacialLandmarksDetectionModel(models_info['facial_landmarks_detection_model'], args.device, args.cpu_extension)
+	head_pose = HeadPoseEstimationModel(models_info['head_pose_estimation_model'], args.device, args.cpu_extension)
+	gaze_est = GazeEstimationModel(models_info['gaze_estimation_model'], args.device, args.cpu_extension)
+    
 	
 	return face_detec, fac_land, head_pose, gaze_est
 
 
 
 def main():
+    
     # Grab command line args
     args = build_argparser().parse_args()
 
-    filepath = args.input
+    #Init video feeder
+    feeder = check_source(args.input)
 
-    feeder = check_source(filepath)
-
+    #Init mouse controller
     mouse_controller = MouseController('medium','fast')
 
+    #Init models 
     face_detec, fac_land, head_pose, gaze_est = init_models(args)
 
-    print('Done')
+    #Get data from source
+    feeder.load_data()
+
+    #Load models
+    print('Loading models...')
+    face_detec.load_model()
+    fac_land.load_model()
+    head_pose.load_model()
+    gaze_est.load_model()
+    print('Models Loaded')
+
+
+
 
 
 

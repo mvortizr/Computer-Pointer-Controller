@@ -4,18 +4,19 @@ This has been provided just to give you an idea of how to structure your model c
 '''
 import cv2
 import numpy as np
-from openvino.inference_engine import IECore
+from openvino.inference_engine import IENetwork,IECore
+
 
 
 class FaceDetectionModel:
     '''
     Class for the Face Detection Model.
     '''
-    def __init__(self, model_name, device='CPU', extension=None,prob_threshold=0.6):
+    def __init__(self, model_name, device='CPU', extensions=None,prob_threshold=0.6):
         #Initialize class
         self.model_name = model_name
         self.device = device
-        self.extension= extension
+        self.extensions= extensions
         self.prob_threshold=prob_threshold
         self.plugin = None
         self.network = None
@@ -32,17 +33,18 @@ class FaceDetectionModel:
         model_weights = self.model_name.split('.')[0]+'.bin'
 
         # Initialize the plugin for the device
-        if not plugin:
+        if not self.plugin:
             self.plugin = IECore()
         else:
             self.plugin = plugin
 
         #Add CPU extension if applicable
-        if self.extension and 'CPU' in self.device:
-            self.plugin.add_extension(self.extension,self.device)
+        if self.extensions and 'CPU' in self.device:
+            self.plugin.add_extension(self.extensions,self.device)
 
         # Read the IR
-        self.network = self.plugin.read_network(model=model_structure, weights=model_weights)
+        #self.network = self.plugin.read_network(model=model_structure, weights=model_weights)
+        self.network = IENetwork(model=model_structure, weights=model_weights)
         
         #Check for unsuppported layers
         self.check_model()
@@ -57,18 +59,17 @@ class FaceDetectionModel:
         self.output_shape = self.network.outputs[self.output_names].shape
 
     def predict(self, image):
-
+        #Make inference
         processed = self.preprocess_input(image.copy())
         outputs = self.exec_net.infer({self.input_name:processed})
         coords = self.preprocess_output(outputs)
-        cropped_face,coords = self.crop_face(coords,image)
-        return cropped_face, coords
+        return self.crop_face(coords,image)
 
     
     def check_model(self): 
         #Check for unsupported layers 
         if self.device == "CPU":     
-            supported_layers = self.plugin.query_network(network=self.network, device_name=device)  
+            supported_layers = self.plugin.query_network(network=self.network, device_name=self.device)  
             unsupported_layers = [l for l in self.network.layers.keys() if l not in supported_layers]
             if len(unsupported_layers) != 0:
                 log.error("[ERROR] Unsupported layers found: {}".format(unsupported_layers))
@@ -83,7 +84,7 @@ class FaceDetectionModel:
         return processed
 
     
-    def crop_face(self,coords):
+    def crop_face(self,coords,image):
         
         if (len(coords)==0):
             return 0,0
