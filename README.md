@@ -104,6 +104,8 @@ The entrypoint of the application is the file `/src/main.py` you need to pass th
 | -o or --outputs | no  | See outputs of selected models. Valid inputs: FLM, HPEM and GEM |
 | -d or --device | no  | Target device to infer. Valid inputs: CPU, GPU, FPGA or MYRIAD. |
 | -ce or --cpu_extension | no  | Earlier versions of OpenVINO require the path to the CPU extension |
+| -op or --output_path | no  | Output path for the Intel Dev Cloud |
+
 
 __Models Used__
 
