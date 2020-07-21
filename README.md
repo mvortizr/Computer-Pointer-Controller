@@ -101,13 +101,13 @@ The entrypoint of the application is the file `/src/main.py` you need to pass th
 | -g or --gaze_estimation_model | yes  |    Path to .xml file of the gaze estimation model |
 | -i or --input | yes  |Path to video file or enter 'cam' to work with webcam |
 | -t or --threshold | no  |Probability threshold for the face detection model. |
-| -o or --outputs | no  | See outputs of selected models. Valid inputs: FLM, HPEM and GEM |
+| -fl or --flags | no  | Flags to see the outputs of selected models. Valid inputs: FLM, HPEM and GEM* |
 | -d or --device | no  | Target device to infer. Valid inputs: CPU, GPU, FPGA or MYRIAD. |
 | -ce or --cpu_extension | no  | Earlier versions of OpenVINO require the path to the CPU extension |
 | -op or --output_path | no  | Output path for the Intel Dev Cloud |
 | -b or --benchmarking | no  | Activates benchmarking mode on Dev Cloud |
 
-
+* = FLM corresponds to the facial landmarks model, HPEM to the head pose estimation model and GEM corresponds to the Gaze estimation model
 __Models Used__
 
 * [Face Detection](https://docs.openvinotoolkit.org/latest/omz_models_intel_face_detection_adas_binary_0001_description_face_detection_adas_binary_0001.html): Used to isolate the face from the background.
