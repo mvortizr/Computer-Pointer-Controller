@@ -105,6 +105,7 @@ The entrypoint of the application is the file `/src/main.py` you need to pass th
 | -d or --device | no  | Target device to infer. Valid inputs: CPU, GPU, FPGA or MYRIAD. |
 | -ce or --cpu_extension | no  | Earlier versions of OpenVINO require the path to the CPU extension |
 | -op or --output_path | no  | Output path for the Intel Dev Cloud |
+| -b or --benchmarking | no  | Activates benchmarking mode on Dev Cloud |
 
 
 __Models Used__
