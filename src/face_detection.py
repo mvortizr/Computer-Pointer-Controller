@@ -90,7 +90,10 @@ class FaceDetectionModel:
             return 0,0
 
         coords = coords[0] 
-        h,w = image.shape
+
+        h = image.shape[0]
+        w = image.shape[1]
+        
         coords = coords* np.array([w, h, w, h])
         coords = coords.astype(np.int32)   
         cropped_face = image[coords[1]:coords[3], coords[0]:coords[2]]

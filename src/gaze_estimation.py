@@ -5,6 +5,7 @@ This has been provided just to give you an idea of how to structure your model c
 import cv2
 import numpy as np
 from openvino.inference_engine import IENetwork,IECore
+import math
 
 class GazeEstimationModel:
     '''

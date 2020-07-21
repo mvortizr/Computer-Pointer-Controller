@@ -61,7 +61,10 @@ class FacialLandmarksDetectionModel:
         return self.preprocess_coords(coords,image)
 
     def preprocess_coords(self,coords,image):
-        h,w = image.shape
+        
+        h = image.shape[0]
+        w = image.shape[1]
+
         eye_area=10
 
         coords = coords * np.array([w, h, w, h])
