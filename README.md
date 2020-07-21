@@ -126,7 +126,8 @@ __File Structure__
 
 ![File-Structure](./images/file_structure.png)
 - `bin` contains a video file called `demo.mp4` to test the application
-- `requirements.txt` contains all the dependencies required to run the applicatio
+- `requirements.txt` contains all the dependencies required to run the application
+- `benchmark` folder contains all the files used for benchmarking the application
 -   `src` folder contains all the source files of the application:
     
     1.  face_detection.py
