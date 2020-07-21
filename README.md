@@ -116,12 +116,13 @@ __The Pipeline__
 
 First,  the input stream from the camera or video file goes into the face detection model.  Then, the output from this model feeds the landmark detection model and the head pose estimation model. After that, the outputs from both models feed the gaze estimation model that produces the coordinates needed to move the mouse pointer. This architecture is illustrated on the following image:
 
---Add image of the architecture---
+[Pipeline]: /images/pipeline.png "Pipeline"
+
 
 
 __File Structure__
 
---Add file structure image--
+[File Structure]: /images/file_structure.png "File Structure"
 
 - `bin` contains a video file called `demo.mp4` to test the application
 - `requirements.txt` contains all the dependencies required to run the applicatio

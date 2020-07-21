@@ -37,7 +37,7 @@ def build_argparser():
 
     parser.add_argument("-o", "--outputs", required=False, type=str,nargs='+', default=[],
                         help="See outputs of selected models. "
-                        "Valid inputs: FLM', 'HPEM' and 'GEM' ")
+                        "Valid inputs: 'FLM', 'HPEM' and 'GEM' ")
     
     parser.add_argument("-d", "--device", required=False,type=str, default="CPU",
                         help="Target device to infer on: "
