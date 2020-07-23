@@ -49,8 +49,11 @@ def build_argparser():
     parser.add_argument("-ce", "--cpu_extension", required=False,type=str, default=None,
                         help="Path to the CPU extension")
 
+    parser.add_argument("-op", "--output_path", required=False,type=str, default=None,
+                        help="Output path of the benchmark file")
+
     parser.add_argument("-b", "--benchmarking", required=False,type=str2bool, nargs='?',const=True,default=False,
-                        help="Activates benchmarking mode on Dev Cloud")
+                        help="Activates benchmarking mode and saves stats")
     return parser
 
 
@@ -152,6 +155,9 @@ def main():
     #Check if we are in benchmark mode
     benchmarking_mode= args.benchmarking
 
+
+    output_path = args.output_path
+
     #Init video feeder
     feeder = check_source(args.input, logger)
 
@@ -232,7 +238,7 @@ def main():
     inference_time = time.time() - start_inference_time
 	#Stats for benchmark
     if(benchmarking_mode):
-        with open('benchmark.txt', 'w') as f:
+        with open(output_path+'benchmark.txt', 'w') as f:
             f.write(str(inference_time) + '\n')
             f.write(str(model_load_time) + '\n')
 
