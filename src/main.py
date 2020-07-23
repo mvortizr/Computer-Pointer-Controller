@@ -193,7 +193,7 @@ def main():
         count+=1
 
         #To do: delete this
-        if count%5==0 and len(show_outputs)==0 and (not benchmarking_mode):
+        if count%5==0 and len(show_outputs)==0:
            cv2.imshow('Computer Pointer Controller',cv2.resize(frame,(500,500)))
 
         key = cv2.waitKey(60)
@@ -229,7 +229,7 @@ def main():
 	        cv2.imshow('Outputs',cv2.resize(new_frame,(500,500)))
 
 
-        if (count%5==0) and not benchmarking_mode:
+        if (count%5==0):
         	mouse_controller.move(mouse_coords[0],mouse_coords[1])
 
         if key==27:

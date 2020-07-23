@@ -95,10 +95,10 @@ Command to run the application on the CPU and with flags activated showing the o
 ```
 python src/main.py -f models/intel/face-detection-adas-binary-0001/FP32-INT1/face-detection-adas-binary-0001.xml -l models/intel/landmarks-regression-retail-0009/FP16/landmarks-regression-retail-0009.xml -hp models/intel/head-pose-estimation-adas-0001/FP16/head-pose-estimation-adas-0001.xml -g models/intel/gaze-estimation-adas-0002/FP16/gaze-estimation-adas-0002.xml -i bin/demo.mp4 -d CPU -fl FDM FLM HPEM GEM
 ```
-Command to run in benchmarking mode
+Command to run in benchmarking mode printing stats
 
 ```
-python src/main.py -f models/intel/face-detection-adas-binary-0001/FP32-INT1/face-detection-adas-binary-0001.xml -l models/intel/landmarks-regression-retail-0009/FP16/landmarks-regression-retail-0009.xml -hp models/intel/head-pose-estimation-adas-0001/FP16/head-pose-estimation-adas-0001.xml -g models/intel/gaze-estimation-adas-0002/FP16/gaze-estimation-adas-0002.xml -i bin/demo.mp4 -b true
+python src/main.py -f models/intel/face-detection-adas-binary-0001/FP32-INT1/face-detection-adas-binary-0001.xml -l models/intel/landmarks-regression-retail-0009/FP16/landmarks-regression-retail-0009.xml -hp models/intel/head-pose-estimation-adas-0001/FP16/head-pose-estimation-adas-0001.xml -g models/intel/gaze-estimation-adas-0002/FP16/gaze-estimation-adas-0002.xml -i bin/demo.mp4 -b true -op stats/
 ```
 
 
@@ -180,8 +180,38 @@ __File Structure__
 
 
 ## Benchmarks
-*TODO:* Include the benchmark results of running your model on multiple hardwares and multiple model precisions. Your benchmarks can include: model loading time, input/output processing time, model inference time etc.
+
+The project was tested using FP32 and FP16 precisions of the models. Using a Intel i5 CPU.
+The only exception was the face detection model that was just available in FP32-INT1. 
+The parameter tested were model load time and model inference time. 
+
+
+
+FP16 precision
+
+```
+python src/main.py -f models/intel/face-detection-adas-binary-0001/FP32-INT1/face-detection-adas-binary-0001.xml -l models/intel/landmarks-regression-retail-0009/FP16/landmarks-regression-retail-0009.xml -hp models/intel/head-pose-estimation-adas-0001/FP16/head-pose-estimation-adas-0001.xml -g models/intel/gaze-estimation-adas-0002/FP16/gaze-estimation-adas-0002.xml -i bin/demo.mp4 -b true -op stats/FP16
+
+```
+
+
+FP32 precision
+
+```
+python src/main.py -f models/intel/face-detection-adas-binary-0001/FP32-INT1/face-detection-adas-binary-0001.xml -l models/intel/landmarks-regression-retail-0009/FP32/landmarks-regression-retail-0009.xml -hp models/intel/head-pose-estimation-adas-0001/FP32/head-pose-estimation-adas-0001.xml -g models/intel/gaze-estimation-adas-0002/FP32/gaze-estimation-adas-0002.xml -i bin/demo.mp4 -b true -op stats/FP32
+```
+
+| Parameter   | FP32           | FP16  |
+| :------------- |:-------------:| -----:|
+| Inference Time|28.765339851379395 |27.57837438583374 |
+| Model Load Time| 2.2380857467651367 |0.7284233570098877|
+
 
 ## Results
-*TODO:* Discuss the benchmark results and explain why you are getting the results you are getting. For instance, explain why there is difference in inference time for FP32, FP16 and INT8 models.
+
+Most of the time people choose lower precision models for edge applications because they are lighter and can infer quicker than high precision models, but in this case it is not a good option. The FP16 models dropped the accuracy of the application and didn't provide a significant improvement on inference performance to make it worth it.
+
+However the high model load time of the FP32 precision models are not convenient in an edge application that requires low latency. For example, if these FP32 models were in a sensor that turns on inference after a specific trigger, it would be unviable. The inference will miss the first 2 seconds. 
+
+
 
