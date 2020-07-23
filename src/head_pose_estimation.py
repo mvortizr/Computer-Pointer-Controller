@@ -5,6 +5,7 @@ This has been provided just to give you an idea of how to structure your model c
 import cv2
 import numpy as np
 from openvino.inference_engine import IENetwork,IECore
+import logging
 
 class HeadPoseEstimationModel:
     '''
@@ -61,6 +62,7 @@ class HeadPoseEstimationModel:
 
     def check_model(self):
         #Check for unsupported layers 
+        log = logging.getLogger()
         if self.device == "CPU":     
             supported_layers = self.plugin.query_network(network=self.network, device_name=self.device)  
             unsupported_layers = [l for l in self.network.layers.keys() if l not in supported_layers]

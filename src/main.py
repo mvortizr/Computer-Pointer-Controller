@@ -9,6 +9,7 @@ from head_pose_estimation import HeadPoseEstimationModel
 from mouse_controller import MouseController
 from argparse import ArgumentParser
 from input_feeder import InputFeeder
+import time
 
 
 
@@ -48,9 +49,6 @@ def build_argparser():
     parser.add_argument("-ce", "--cpu_extension", required=False,type=str, default=None,
                         help="Path to the CPU extension")
 
-    parser.add_argument("-op", "--output_path", required=False,type=str, default=None,
-                        help="Output path when running on Dev Cloud")
-
     parser.add_argument("-b", "--benchmarking", required=False,type=str2bool, nargs='?',const=True,default=False,
                         help="Activates benchmarking mode on Dev Cloud")
     return parser
@@ -67,7 +65,7 @@ def str2bool(v):
     else:
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
-def check_source(filepath):
+def check_source(filepath,logger):
 	
 	feeder = None
 
@@ -75,7 +73,7 @@ def check_source(filepath):
 		feeder = InputFeeder('cam')
 	else:
 		if not os.path.isfile(filepath):
-			print('[ERROR] Video file does not exist')
+			logger.error("Unable to find specified video file")
 			exit(1)
 
 		feeder = InputFeeder('video',filepath)
@@ -83,7 +81,7 @@ def check_source(filepath):
 	return feeder 
 
 
-def init_models(args):
+def init_models(args, logger):
 
 	face_detec=None
 	fac_land=None
@@ -98,8 +96,8 @@ def init_models(args):
     }
 
 	for model_name in models_info.keys():
-		if not os.path.isfile(models_info[model_name]):
-			print(f'[ERROR] The {model_name} file does not exist')
+		if not os.path.isfile(models_info[model_name]):          
+			logger.error("Unable to find the model file of " + str(model_name))
 			exit(1)
 
 	#Init classes
@@ -141,46 +139,45 @@ def show_gem_outputs(gaze,left_eye,right_eye,face,eyes_coords):
 
 def main():
     
-    #TODO: Check requirements.txr
-    #TODO: Run this on different hardware
-    #TODO: Add benchmarks to README.md
 
     # Grab command line args
     args = build_argparser().parse_args()
 
     #Create logger obj
-    #TODO: rewrite prints as logger
     logger = logging.getLogger('main')
 
     # Flags to show outputs of the model
     show_outputs = args.flags
 
     #Check if we are in benchmark mode
-    #TODO: implement benchmark mode
     benchmarking_mode= args.benchmarking
 
     #Init video feeder
-    feeder = check_source(args.input)
+    feeder = check_source(args.input, logger)
 
     #Init mouse controller
     mouse_controller = MouseController('medium','fast')
 
     #Init models 
-    face_detec, fac_land, head_pose, gaze_est = init_models(args)
+    face_detec, fac_land, head_pose, gaze_est = init_models(args,logger)
 
     #Get data from source
     feeder.load_data()
 
 	#Load models
-    print('Loading models...')
+    logger.info("Loading Models")
+    start_model_load_time = time.time()
     face_detec.load_model()
     fac_land.load_model()
     head_pose.load_model()
     gaze_est.load_model()
-    print('Models Loaded')
+    model_load_time = time.time() - start_model_load_time
+    logger.info('Models Loaded')
 
     #Init frame counter
     count = 0
+
+    start_inference_time = time.time()
 
     for r, frame in feeder.next_batch():
        
@@ -190,7 +187,7 @@ def main():
         count+=1
 
         #To do: delete this
-        if count%5==0 and len(show_outputs)==0:
+        if count%5==0 and len(show_outputs)==0 and (not benchmarking_mode):
            cv2.imshow('Computer Pointer Controller',cv2.resize(frame,(500,500)))
 
         key = cv2.waitKey(60)
@@ -198,7 +195,7 @@ def main():
         face, face_coords = face_detec.predict(frame.copy())
 
         if type(face) == int:
-        	print("[ERROR]: Can't detect face")
+        	logger.error("Can't detect face")
         	if key==27:
         		break
         	continue
@@ -209,9 +206,8 @@ def main():
         
         mouse_coords, gaze = gaze_est.predict(left_eye, right_eye, hp_pred)
 
-        #Debug mode 
-        #TODO: Add face detection model, avoud cropping picture
-        if (len(show_outputs)>0):
+        #Flags
+        if ((len(show_outputs)>0) and (not benchmarking_mode)):
 
 	        new_frame = face.copy()
 	        
@@ -227,13 +223,24 @@ def main():
 	        cv2.imshow('Outputs',cv2.resize(new_frame,(500,500)))
 
 
-        if count%5==0:
+        if (count%5==0) and not benchmarking_mode:
         	mouse_controller.move(mouse_coords[0],mouse_coords[1])
 
         if key==27:
                 break  
 
-	#TODO: Print stats for benchmark	
+    inference_time = time.time() - start_inference_time
+	#Stats for benchmark
+    if(benchmarking_mode):
+        with open('benchmark.txt', 'w') as f:
+            f.write(str(inference_time) + '\n')
+            f.write(str(model_load_time) + '\n')
+
+        logger.info('Model load time: ' + str(model_load_time))
+        logger.info('Inference time: ' + str(inference_time))
+
+    logger.info('Video stream ended')
+
     cv2.destroyAllWindows()
     feeder.close()
 
