@@ -10,6 +10,7 @@ __Requirements__
 * OpenVINO Toolkit 2020.1.023
 * Python3
 * Pip
+* Tkinter 
 
 
 __Step 1: Download the OpenVINO Toolkit__
@@ -74,6 +75,14 @@ Then install all the dependencies of this project by running:
 ```
 pip install -r requirements.txt
 ```
+__Step 6: Install Tkinter__
+This project uses Tkinter to move the mouse pointer. It is available [here](hhttps://docs.python.org/3/library/tkinter.html).
+If the device is a Debian based Linux you can run the following command:
+
+```
+ sudo apt-get install python3-tk python3-dev
+```
+
 
 ## Demo
 
@@ -82,9 +91,9 @@ Command to run the application on the CPU
 python src/main.py -f models/intel/face-detection-adas-binary-0001/FP32-INT1/face-detection-adas-binary-0001.xml -l models/intel/landmarks-regression-retail-0009/FP16/landmarks-regression-retail-0009.xml -hp models/intel/head-pose-estimation-adas-0001/FP16/head-pose-estimation-adas-0001.xml -g models/intel/gaze-estimation-adas-0002/FP16/gaze-estimation-adas-0002.xml -i bin/demo.mp4 -d CPU 
 ```
 
-Command to run the application on the CPU and show the outputs of the models
+Command to run the application on the CPU and with flags activated showing the outputs of the models
 ```
-python src/main.py -f models/intel/face-detection-adas-binary-0001/FP32-INT1/face-detection-adas-binary-0001.xml -l models/intel/landmarks-regression-retail-0009/FP16/landmarks-regression-retail-0009.xml -hp models/intel/head-pose-estimation-adas-0001/FP16/head-pose-estimation-adas-0001.xml -g models/intel/gaze-estimation-adas-0002/FP16/gaze-estimation-adas-0002.xml -i bin/demo.mp4 -d CPU -o FLM HPEM GEM
+python src/main.py -f models/intel/face-detection-adas-binary-0001/FP32-INT1/face-detection-adas-binary-0001.xml -l models/intel/landmarks-regression-retail-0009/FP16/landmarks-regression-retail-0009.xml -hp models/intel/head-pose-estimation-adas-0001/FP16/head-pose-estimation-adas-0001.xml -g models/intel/gaze-estimation-adas-0002/FP16/gaze-estimation-adas-0002.xml -i bin/demo.mp4 -d CPU -f FLM HPEM GEM
 ```
 
 ## Documentation
@@ -101,10 +110,13 @@ The entrypoint of the application is the file `/src/main.py` you need to pass th
 | -g or --gaze_estimation_model | yes  |    Path to .xml file of the gaze estimation model |
 | -i or --input | yes  |Path to video file or enter 'cam' to work with webcam |
 | -t or --threshold | no  |Probability threshold for the face detection model. |
-| -o or --outputs | no  | See outputs of selected models. Valid inputs: FLM, HPEM and GEM |
+| -fl or --flags | no  | Flags to see the outputs of selected models. Valid inputs: FLM, HPEM and GEM* |
 | -d or --device | no  | Target device to infer. Valid inputs: CPU, GPU, FPGA or MYRIAD. |
 | -ce or --cpu_extension | no  | Earlier versions of OpenVINO require the path to the CPU extension |
+| -op or --output_path | no  | Output path for the Intel Dev Cloud |
+| -b or --benchmarking | no  | Activates benchmarking mode on Dev Cloud |
 
+* = FLM corresponds to the facial landmarks model, HPEM to the head pose estimation model and GEM corresponds to the Gaze estimation model
 __Models Used__
 
 * [Face Detection](https://docs.openvinotoolkit.org/latest/omz_models_intel_face_detection_adas_binary_0001_description_face_detection_adas_binary_0001.html): Used to isolate the face from the background.
@@ -116,16 +128,16 @@ __The Pipeline__
 
 First,  the input stream from the camera or video file goes into the face detection model.  Then, the output from this model feeds the landmark detection model and the head pose estimation model. After that, the outputs from both models feed the gaze estimation model that produces the coordinates needed to move the mouse pointer. This architecture is illustrated on the following image:
 
-[Pipeline]: /images/pipeline.png "Pipeline"
+![Pipeline](./images/pipeline.png)
 
 
 
 __File Structure__
 
-[File Structure]: /images/file_structure.png "File Structure"
-
+![File-Structure](./images/file_structure.png)
 - `bin` contains a video file called `demo.mp4` to test the application
-- `requirements.txt` contains all the dependencies required to run the applicatio
+- `requirements.txt` contains all the dependencies required to run the application
+- `benchmark` folder contains all the files used for benchmarking the application
 -   `src` folder contains all the source files of the application:
     
     1.  face_detection.py
