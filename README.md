@@ -118,10 +118,13 @@ The entrypoint of the application is the file `/src/main.py` you need to pass th
 | -t or --threshold | no  |Probability threshold for the face detection model. |
 | -fl or --flags | no  | Flags to see the outputs of selected models. Valid inputs: FLM, HPEM and GEM* |
 | -d or --device | no  | Target device to infer. Valid inputs: CPU, GPU, FPGA or MYRIAD. |
-| -ce or --cpu_extension | no  | Earlier versions of OpenVINO require the path to the CPU extension |
-| -b or --benchmarking | no  | Activates benchmarking mode on Dev Cloud |
+| -ce or --cpu_extension | no  | Earlier versions of OpenVINO require the path to the CPU extension** | 
+| -op or --output_path | no  | Earlier versions of OpenVINO require the path to the CPU extension |
+| -b or --benchmarking | no  | Activates benchmarking mode |
 
 * = FLM corresponds to the facial landmarks model, HPEM to the head pose estimation model and GEM corresponds to the Gaze estimation model
+** = The program was tested in an  OpenVINO Toolkit 2020.1.023 enviroment, it is not certain if it fully supports backwards compatibility 
+
 __Models Used__
 
 * [Face Detection](https://docs.openvinotoolkit.org/latest/omz_models_intel_face_detection_adas_binary_0001_description_face_detection_adas_binary_0001.html): Used to isolate the face from the background.
@@ -140,9 +143,9 @@ First,  the input stream from the camera or video file goes into the face detect
 __File Structure__
 
 ![File-Structure](./images/file_structure.png)
+- `models` contains folder with diferent models and precisions 
 - `bin` contains a video file called `demo.mp4` to test the application
 - `requirements.txt` contains all the dependencies required to run the application
-- `benchmark` folder contains all the files used for benchmarking the application
 -   `src` folder contains all the source files of the application:
     
     1.  face_detection.py
