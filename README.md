@@ -93,8 +93,14 @@ python src/main.py -f models/intel/face-detection-adas-binary-0001/FP32-INT1/fac
 
 Command to run the application on the CPU and with flags activated showing the outputs of the models
 ```
-python src/main.py -f models/intel/face-detection-adas-binary-0001/FP32-INT1/face-detection-adas-binary-0001.xml -l models/intel/landmarks-regression-retail-0009/FP16/landmarks-regression-retail-0009.xml -hp models/intel/head-pose-estimation-adas-0001/FP16/head-pose-estimation-adas-0001.xml -g models/intel/gaze-estimation-adas-0002/FP16/gaze-estimation-adas-0002.xml -i bin/demo.mp4 -d CPU -f FLM HPEM GEM
+python src/main.py -f models/intel/face-detection-adas-binary-0001/FP32-INT1/face-detection-adas-binary-0001.xml -l models/intel/landmarks-regression-retail-0009/FP16/landmarks-regression-retail-0009.xml -hp models/intel/head-pose-estimation-adas-0001/FP16/head-pose-estimation-adas-0001.xml -g models/intel/gaze-estimation-adas-0002/FP16/gaze-estimation-adas-0002.xml -i bin/demo.mp4 -d CPU -fl FDM FLM HPEM GEM
 ```
+Command to run in benchmarking mode
+
+```
+python src/main.py -f models/intel/face-detection-adas-binary-0001/FP32-INT1/face-detection-adas-binary-0001.xml -l models/intel/landmarks-regression-retail-0009/FP16/landmarks-regression-retail-0009.xml -hp models/intel/head-pose-estimation-adas-0001/FP16/head-pose-estimation-adas-0001.xml -g models/intel/gaze-estimation-adas-0002/FP16/gaze-estimation-adas-0002.xml -i bin/demo.mp4 -b true
+```
+
 
 ## Documentation
 
@@ -113,7 +119,6 @@ The entrypoint of the application is the file `/src/main.py` you need to pass th
 | -fl or --flags | no  | Flags to see the outputs of selected models. Valid inputs: FLM, HPEM and GEM* |
 | -d or --device | no  | Target device to infer. Valid inputs: CPU, GPU, FPGA or MYRIAD. |
 | -ce or --cpu_extension | no  | Earlier versions of OpenVINO require the path to the CPU extension |
-| -op or --output_path | no  | Output path for the Intel Dev Cloud |
 | -b or --benchmarking | no  | Activates benchmarking mode on Dev Cloud |
 
 * = FLM corresponds to the facial landmarks model, HPEM to the head pose estimation model and GEM corresponds to the Gaze estimation model
