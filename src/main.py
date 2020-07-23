@@ -1,6 +1,7 @@
 import cv2
 import os
 import numpy as np
+import logging
 from face_detection import FaceDetectionModel
 from facial_landmarks_detection import FacialLandmarksDetectionModel
 from gaze_estimation import GazeEstimationModel
@@ -8,6 +9,7 @@ from head_pose_estimation import HeadPoseEstimationModel
 from mouse_controller import MouseController
 from argparse import ArgumentParser
 from input_feeder import InputFeeder
+
 
 
 def build_argparser():
@@ -34,8 +36,8 @@ def build_argparser():
 
     parser.add_argument("-t", "--threshold", required=False, type=float, default=0.6,
                         help="Probability threshold for the face detection model.")
-
-    parser.add_argument("-o", "--outputs", required=False, type=str,nargs='+', default=[],
+ 
+    parser.add_argument("-fl", "--flags", required=False, type=str,nargs='+', default=[],
                         help="See outputs of selected models. "
                         "Valid inputs: 'FLM', 'HPEM' and 'GEM' ")
     
@@ -45,9 +47,25 @@ def build_argparser():
 
     parser.add_argument("-ce", "--cpu_extension", required=False,type=str, default=None,
                         help="Path to the CPU extension")
+
+    parser.add_argument("-op", "--output_path", required=False,type=str, default=None,
+                        help="Output path when running on Dev Cloud")
+
+    parser.add_argument("-b", "--benchmarking", required=False,type=str2bool, nargs='?',const=True,default=False,
+                        help="Activates benchmarking mode on Dev Cloud")
     return parser
 
 
+def str2bool(v):
+	#convert arg string into boolean
+    if isinstance(v, bool):
+       return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
 
 def check_source(filepath):
 	
@@ -120,15 +138,26 @@ def show_gem_outputs(gaze,left_eye,right_eye,face,eyes_coords):
 	face[le_coords[1]:le_coords[3],le_coords[0]:le_coords[2]] = le_line
 	face[re_coords[1]:re_coords[3],re_coords[0]:re_coords[2]] = re_line
 
+
 def main():
     
+    #TODO: Check requirements.txr
+    #TODO: Run this on different hardware
+    #TODO: Add benchmarks to README.md
+
     # Grab command line args
     args = build_argparser().parse_args()
 
-    # Option to show outputs of the model
-    show_outputs = args.outputs
+    #Create logger obj
+    #TODO: rewrite prints as logger
+    logger = logging.getLogger('main')
 
-    print('show outputs', show_outputs)
+    # Flags to show outputs of the model
+    show_outputs = args.flags
+
+    #Check if we are in benchmark mode
+    #TODO: implement benchmark mode
+    benchmarking_mode= args.benchmarking
 
     #Init video feeder
     feeder = check_source(args.input)
@@ -160,6 +189,7 @@ def main():
 
         count+=1
 
+        #To do: delete this
         if count%5==0 and len(show_outputs)==0:
            cv2.imshow('Computer Pointer Controller',cv2.resize(frame,(500,500)))
 
@@ -180,6 +210,7 @@ def main():
         mouse_coords, gaze = gaze_est.predict(left_eye, right_eye, hp_pred)
 
         #Debug mode 
+        #TODO: Add face detection model, avoud cropping picture
         if (len(show_outputs)>0):
 
 	        new_frame = face.copy()
@@ -202,7 +233,7 @@ def main():
         if key==27:
                 break  
 
-	
+	#TODO: Print stats for benchmark	
     cv2.destroyAllWindows()
     feeder.close()
 
