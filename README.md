@@ -142,8 +142,10 @@ First,  the input stream from the camera or video file goes into the face detect
 
 __File Structure__
 
-![File-Structure](./images/file_structure.png)
-- `models` contains folder with diferent models and precisions 
+![File-Structure](./images/fs1.png)
+![File-Structure2](./images/fs2.png)
+
+- `models` contains folder with the iferent models mentioned before and their precisions 
 - `bin` contains a video file called `demo.mp4` to test the application
 - `requirements.txt` contains all the dependencies required to run the application
 -   `src` folder contains all the source files of the application:
