@@ -10,6 +10,7 @@ __Requirements__
 * OpenVINO Toolkit 2020.1.023
 * Python3
 * Pip
+* Tkinter 
 
 
 __Step 1: Download the OpenVINO Toolkit__
@@ -74,6 +75,14 @@ Then install all the dependencies of this project by running:
 ```
 pip install -r requirements.txt
 ```
+__Step 6: Install Tkinter__
+This project uses Tkinter to move the mouse pointer. It is available [here](hhttps://docs.python.org/3/library/tkinter.html).
+If the device is a Debian based Linux you can run the following command:
+
+```
+ sudo apt-get install python3-tk python3-dev
+```
+
 
 ## Demo
 
